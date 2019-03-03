@@ -1,25 +1,40 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      results: {}
+    }
+  }
+  componentDidMount = () => {
+    fetch('https://api.randomuser.me/?results=10')
+      .then(resp => resp.json())
+      .then(resp => {
+        const { results  } = resp;
+        this.setState(
+          {
+            results,
+          }
+        )
+      })
+  }
+
   render() {
+    const { results = [] } = this.state;
+    const arrayRes = Array.from(results);
+    console.log(results)
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        {arrayRes && arrayRes.map(user => {
+          return <div>
+            <img src={user.picture.large} />
+            <div>{user.name.first} {user.name.last}</div>
+            <div>{user.email}</div>
+          </div>
+        })}
       </div>
     );
   }
